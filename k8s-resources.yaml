@@ -80,7 +80,7 @@ spec:
           name: http
         readinessProbe:
           httpGet:
-            path: /healthz
+            path: /health
             port: 8080
           initialDelaySeconds: 15
           timeoutSeconds: 5
