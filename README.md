@@ -7,6 +7,6 @@
 `npm run test`
 
 ### Deploy on kubernetes (e.g. minikube or any)
-`kubectl appy -f k8s-resources.yaml`
+`kubectl apply -f k8s-resources.yaml`
 
 Application supports PORT variable to override the default `3000`.
