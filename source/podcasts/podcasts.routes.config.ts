@@ -31,14 +31,12 @@ export class PodcastsRoutes extends CommonRoutesConfig {
 
     this.app.patch(PODCAST_BY_ID_PATH, [PodcastsController.patch]);
 
-    this.app
-      .route(HEALTHCHECK_PATH)
-      .get(PodcastsController.getHealth)
+    this.app.route(HEALTHCHECK_PATH).get(PodcastsController.getHealth);
 
     return this.app;
   }
 }
 
-const HEALTHCHECK_PATH = "/health"
+const HEALTHCHECK_PATH = '/health';
 const PODCAST_PATH = '/podcasts/';
 const PODCAST_BY_ID_PATH = '/podcasts/:podcastId';

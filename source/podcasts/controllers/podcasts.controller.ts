@@ -10,32 +10,32 @@ class PodcastsController {
   }
 
   async getPodcastById(req: express.Request, res: express.Response) {
-    const podcast = await podcastsService.readById(req.body.id);
+    const podcast = await podcastsService.readById(req.body._id);
     res.status(200).send(podcast);
   }
 
   async createPodcast(req: express.Request, res: express.Response) {
     const podcastId = await podcastsService.create(req.body);
-    res.status(201).send({ id: podcastId });
+    res.status(201).send({ _id: podcastId });
   }
 
   async patch(req: express.Request, res: express.Response) {
-    log(await podcastsService.patchById(req.body.id, req.body));
+    log(await podcastsService.patchById(req.body._id, req.body));
     res.status(204).send();
   }
 
   async put(req: express.Request, res: express.Response) {
-    log(await podcastsService.putById(req.body.id, req.body));
+    log(await podcastsService.putById(req.body._id, req.body));
     res.status(204).send();
   }
 
   async removePodcast(req: express.Request, res: express.Response) {
-    log(await podcastsService.deleteById(req.body.id));
+    log(await podcastsService.deleteById(req.body._id));
     res.status(204).send();
   }
 
   async getHealth(_: express.Request, res: express.Response) {
-    res.status(200).send("OK");
+    res.status(200).send('OK');
   }
 }
 

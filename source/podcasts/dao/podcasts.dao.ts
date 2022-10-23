@@ -1,45 +1,49 @@
+import podcastsDatabaseService from '../services/podcasts.database.service';
 import { CreatePodcastDto } from '../dto/create.podcast.dto';
 import { PatchPodcastDto } from '../dto/patch.podcast.dto';
 import { PutPodcastDto } from '../dto/put.podcast.dto';
+import dotenv from 'dotenv';
 import shortid from 'shortid';
 import debug from 'debug';
+import { Collection, Document, ObjectId } from 'mongodb';
 
-const log: debug.IDebugger = debug('app:in-memory-dao');
+const log: debug.IDebugger = debug('app:podcasts-dao');
 
 class PodcastsDao {
-  podcasts: Array<CreatePodcastDto> = [];
+  collection = podcastsDatabaseService.getCollection();
 
   constructor() {
     log('Created new instance of PodcastsDao');
   }
 
   async addPodcast(podcast: CreatePodcastDto) {
-    podcast.id = shortid.generate();
-    this.podcasts.push(podcast);
-    return podcast.id;
+    let podcastId;
+    const result = await this.collection.insertOne(podcast).then((result) => {
+      podcastId = result.insertedId;
+    });
+    return podcastId;
   }
 
   async getPodcasts() {
-    return this.podcasts;
+    const query = await this.collection.find({}).toArray();
+    return query;
   }
 
-  async getPodcastById(podcastId: string) {
-    return this.podcasts.find(({ id }) => id === podcastId);
+  async getPodcastById(podcastId: ObjectId) {
+    const query = { _id: podcastId };
+    const result = await this.collection.findOne(query);
+    return result;
   }
 
-  async putPodcastById(podcastId: string, podcast: PutPodcastDto) {
-    const objIndex = this.podcasts.findIndex(
-      (obj: { id: string }) => obj.id === podcastId
-    );
-    this.podcasts.splice(objIndex, 1, podcast);
-    return `${podcast.id} updated via put`;
+  async putPodcastById(podcastId: ObjectId, podcast: PutPodcastDto) {
+    const query = { _id: podcast._id };
+    const result = await this.collection.updateOne(query, { $set: podcast });
+    return `${podcast._id} replaced`;
   }
 
-  async patchPodcastById(podcastId: string, podcast: PatchPodcastDto) {
-    const objIndex = this.podcasts.findIndex(
-      (obj: { id: string }) => obj.id === podcastId
-    );
-    const currentPodcast = this.podcasts[objIndex];
+  async patchPodcastById(podcastId: ObjectId, podcast: PatchPodcastDto) {
+    const query = { _id: new ObjectId(podcastId) };
+    const currentPodcast = await this.collection.findOne(query);
     const allowedPatchFields = ['title', 'author', 'filename'];
     for (const field of allowedPatchFields) {
       if (field in podcast) {
@@ -47,15 +51,13 @@ class PodcastsDao {
         currentPodcast[field] = podcast[field];
       }
     }
-    this.podcasts.splice(objIndex, 1, currentPodcast);
-    return `${podcast.id} patched`;
+    await this.collection.updateOne(query, { $set: currentPodcast });
+    return `${podcast._id} patched`;
   }
 
-  async removePodcastById(podcastId: string) {
-    const objIndex = this.podcasts.findIndex(
-      (obj: { id: string }) => obj.id === podcastId
-    );
-    this.podcasts.splice(objIndex, 1);
+  async removePodcastById(podcastId: ObjectId) {
+    const query = { _id: new ObjectId(podcastId) };
+    const result = await this.collection.deleteOne(query);
     return `${podcastId} removed`;
   }
 }
