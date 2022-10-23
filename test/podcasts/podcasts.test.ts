@@ -33,8 +33,8 @@ describe('podcasts endpoints', function () {
         expect(res.status).to.equal(201);
         expect(res.body).not.to.be.empty;
         expect(res.body).to.be.an('object');
-        expect(res.body.id).to.be.a('string');
-        firstPodcastIdTest = res.body.id;
+        expect(res.body._id).to.be.a('string');
+        firstPodcastIdTest = res.body._id;
     });
 
     describe('with a single podcast created', function () {
@@ -45,8 +45,8 @@ describe('podcasts endpoints', function () {
             expect(res.status).to.equal(200);
             expect(res.body).not.to.be.empty;
             expect(res.body).to.be.an('object');
-            expect(res.body.id).to.be.a('string');
-            expect(res.body.id).to.equal(firstPodcastIdTest);
+            expect(res.body._id).to.be.a('string');
+            expect(res.body._id).to.equal(firstPodcastIdTest);
         });
 
         let updatePodcastBody = {
@@ -80,8 +80,8 @@ describe('podcasts endpoints', function () {
             expect(res.status).to.equal(200);
             expect(res.body).not.to.be.empty;
             expect(res.body).to.be.an('object');
-            expect(res.body.id).to.be.a('string');
-            expect(res.body.id).to.equal(firstPodcastIdTest);
+            expect(res.body._id).to.be.a('string');
+            expect(res.body._id).to.equal(firstPodcastIdTest);
             expect(res.body.title).to.equal(patchTitle);
             expect(res.body.author).to.equal(newAuthor);
             expect(res.body.filename).to.equal(newFileName);

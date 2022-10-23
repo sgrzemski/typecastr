@@ -1,6 +1,7 @@
 import express from 'express';
 import podcastService from '../services/podcasts.service';
 import debug from 'debug';
+import { ObjectId } from 'mongodb';
 
 const log: debug.IDebugger = debug('app:podcasts-controller');
 class PodcastsMiddleware {
@@ -23,7 +24,7 @@ class PodcastsMiddleware {
     res: express.Response,
     next: express.NextFunction
   ) {
-    const podcast = await podcastService.readById(req.params.podcastId);
+    const podcast = await podcastService.readById(new ObjectId(req.params.podcastId));
     if (podcast) {
       next();
     } else {
@@ -38,7 +39,7 @@ class PodcastsMiddleware {
     res: express.Response,
     next: express.NextFunction
   ) {
-    req.body.id = req.params.podcastId;
+    req.body._id = new ObjectId(req.params.podcastId);
     next();
   }
 }
